@@ -1,0 +1,9 @@
+[wokwi]
+version = 1
+
+firmware = '.pio/build/esp32cam/firmware.bin'
+elf = '.pio/build/esp32cam/firmware.elf'
+
+[[net.forward]]
+from = "localhost:8180"
+to = "cam:80"
