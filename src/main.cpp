@@ -45,6 +45,14 @@ int searchI2C()
   return slaveAddress;
 }
 
+void sendI2C(byte id, byte msg)
+{
+  byte data[2] = {id, msg};
+  Wire.beginTransmission(slaveAdress); // Set the slave address
+  Wire.write(data, 2);                 // Send the command/data byte
+  Wire.endTransmission();
+}
+
 void setupWifi()
 {
   // Connect to Wi-Fi network
@@ -76,11 +84,15 @@ void getRequests()
       inputID = request->getParam("id")->value();
       inputVal = request->getParam("val")->value();
       
-      Serial.print("Device: "); Serial.print(inputID);
-      Serial.print(" - New Value: "); Serial.println(inputVal);
-      
-      if(inputID == "sNoo") {
-        // digitalWrite(RELAY_PIN, inputVal.toInt());
+      uint8_t byteVal = (uint8_t)constrain(inputVal.toInt(), 0, 255);
+      Serial.print("Device: ");
+      Serial.print(inputID);
+      Serial.print(" - New Value: ");
+      Serial.println(byteVal);
+
+      if(inputID == "sMor") {
+
+        sendI2C(1, byteVal);
       }
     }
     request->send(200, "text/plain", "OK"); });
@@ -102,13 +114,7 @@ void SSEEvents()
   Serial.println("Server Started!");
 }
 
-void sendI2C(byte id, byte msg)
-{
-  byte data[2] = {id, msg};
-  Wire.beginTransmission(slaveAdress); // Set the slave address
-  Wire.write(data, 2);                    // Send the command/data byte
-  Wire.endTransmission();
-}
+
 void setup()
 {
   Serial.begin(115200);
