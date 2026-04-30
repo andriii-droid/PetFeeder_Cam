@@ -2,6 +2,8 @@
 #include <ESPAsyncWebServer.h>
 #include <Wire.h>
 #include <html.h>
+#include <map>
+#include <string>
 
 #define DEV_MODE 1 // Set to 1 for Dev, 0 for Production
 
@@ -21,6 +23,17 @@ int slaveAdress = -1;
 // Timer variables
 unsigned long lastTime = 0;
 unsigned long timerDelay = 30000;
+
+//I2C IDs
+std::map<std::string, byte> I2CID = {
+    {"fodderAmount", 0},
+    {"sMor", 1},
+    {"tMor", 2},
+    {"sNoo", 3},
+    {"tNoo", 4},
+    {"sEve", 5},
+    {"tEve", 6}
+};
 
 int searchI2C()
 {
@@ -88,15 +101,14 @@ void getRequests()
       inputVal = request->getParam("val")->value();
       
       uint8_t byteVal = (uint8_t)constrain(inputVal.toInt(), 0, 255);
-      Serial.print("Device: ");
-      Serial.print(inputID);
+
+      byte id = I2CID[inputID.c_str()];
+      sendI2C(id, byteVal);
+
+      Serial.print("ID: ");
+      Serial.print(id);
       Serial.print(" - New Value: ");
       Serial.println(byteVal);
-
-      if(inputID == "sMor") {
-
-        sendI2C(1, byteVal);
-      }
     }
     request->send(200, "text/plain", "OK"); });
 }
