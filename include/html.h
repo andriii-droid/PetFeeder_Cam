@@ -71,18 +71,18 @@ const char index_html[] PROGMEM = R"rawliteral(
     <div id="main">
         <div class="box">
             <span class="label-text">Morgen</span>
-            <input type="range" min="0" max="100" id="sMor">
-            <label class="sw"><input type="checkbox" id="tMor"><span class="sld"></span></label>
+            <input type="range" min="0" max="100" id="sMor" class="slider-input">
+            <label class="sw"><input type="checkbox" id="tMor" class="toggle-input"><span class="sld"></span></label>
         </div>
         <div class="box">
             <span class="label-text">Mittag</span>
-            <input type="range" min="0" max="100" id="sNoo">
-            <label class="sw"><input type="checkbox" id="tNoo"><span class="sld"></span></label>
+            <input type="range" min="0" max="100" id="sNoo" class="slider-input">
+            <label class="sw"><input type="checkbox" id="tNoo" class="toggle-input"><span class="sld"></span></label>
         </div>
         <div class="box">
             <span class="label-text">Abend</span>
-            <input type="range" min="0" max="100" id="sEve">
-            <label class="sw"><input type="checkbox" id="tEve"><span class="sld"></span></label>
+            <input type="range" min="0" max="100" id="sEve" class="slider-input">
+            <label class="sw"><input type="checkbox" id="tEve" class="toggle-input"><span class="sld"></span></label>
         </div>
     </div>
   </div>
@@ -121,5 +121,27 @@ if (!!window.EventSource) {
   setupToggle('NoonToggle', 'tNoo');
   setupToggle('EveningToggle', 'tEve');
 }
+
+//Input Handling
+function updateESP(id, value) {
+  console.log("Updating " + id + " to " + value);
+  // Sends a request like: /update?id=s1&val=45
+  fetch(`/update?id=${id}&val=${value}`);
+}
+
+// Attach listeners to all Sliders
+document.querySelectorAll('.slider-input').forEach(item => {
+  item.addEventListener('input', event => {
+    updateESP(event.target.id, event.target.value);
+  });
+});
+
+// Attach listeners to all Toggles
+document.querySelectorAll('.toggle-input').forEach(item => {
+  item.addEventListener('change', event => {
+    let val = event.target.checked ? 1 : 0;
+    updateESP(event.target.id, val);
+  });
+});
 </script>
 </body></html>)rawliteral";

@@ -68,6 +68,26 @@ void setup()
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/html", index_html); });
 
+  server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request)
+              {
+    String inputID;
+    String inputVal;
+    
+    if (request->hasParam("id") && request->hasParam("val")) {
+      inputID = request->getParam("id")->value();
+      inputVal = request->getParam("val")->value();
+      
+      Serial.print("Device: "); Serial.print(inputID);
+      Serial.print(" - New Value: "); Serial.println(inputVal);
+      
+      // Example: Logic to move a servo or flip a relay
+      if(inputID == "t1") {
+        // digitalWrite(RELAY_PIN, inputVal.toInt());
+      }
+    }
+    request->send(200, "text/plain", "OK"); 
+  });
+
   // Handle Web Server Events
   events.onConnect([](AsyncEventSourceClient *client)
                    {
@@ -92,11 +112,10 @@ void loop()
 
 
     // Send Events to the Web Client with the Sensor Readings
-    events.send("ping", NULL, millis());
     events.send(String(millis() % 101).c_str(), "fodderAmount", millis());
     events.send(String(millis() % 101).c_str(), "MorningAmount", millis());
     events.send(String(millis() % 101).c_str(), "NoonAmount", millis());
-    events.send(String(100).c_str(), "EveningAmount", millis());
+    events.send(String(millis() % 101).c_str(), "EveningAmount", millis());
     events.send(String(millis() % 2).c_str(), "MorningToggle", millis());
     events.send(String(millis() % 2).c_str(), "NoonToggle", millis());
     events.send(String(millis() % 2).c_str(), "EveningToggle", millis());
