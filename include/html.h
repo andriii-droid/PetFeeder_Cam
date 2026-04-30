@@ -69,32 +69,57 @@ const char index_html[] PROGMEM = R"rawliteral(
       <div style="margin-top:10px; font-size: 14px;"><span id="v">0</span>%</div>
     </div>
     <div id="main">
-      <div class="box">
-        <span class="label-text">Morgen</span>
-        <input type="range" min="0" max="100" value="50">
-        <label class="sw"><input type="checkbox"><span class="sld"></span></label>
-      </div>
-      <div class="box">
-        <span class="label-text">Mittag</span>
-        <input type="range" min="0" max="100" value="50">
-        <label class="sw"><input type="checkbox"><span class="sld"></span></label>
-      </div>
-      <div class="box">
-        <span class="label-text">Abend</span>
-        <input type="range" min="0" max="100" value="50">
-        <label class="sw"><input type="checkbox"><span class="sld"></span></label>
-      </div>
+        <div class="box">
+            <span class="label-text">Morgen</span>
+            <input type="range" min="0" max="100" id="sMor">
+            <label class="sw"><input type="checkbox" id="tMor"><span class="sld"></span></label>
+        </div>
+        <div class="box">
+            <span class="label-text">Mittag</span>
+            <input type="range" min="0" max="100" id="sNoo">
+            <label class="sw"><input type="checkbox" id="tNoo"><span class="sld"></span></label>
+        </div>
+        <div class="box">
+            <span class="label-text">Abend</span>
+            <input type="range" min="0" max="100" id="sEve">
+            <label class="sw"><input type="checkbox" id="tEve"><span class="sld"></span></label>
+        </div>
     </div>
   </div>
 <script>
 if (!!window.EventSource) {
   var src = new EventSource('/events');
-  src.addEventListener('temperature', function(e) {
+
+  // Sidebar (Fodder Level)
+  src.addEventListener('fodderAmount', function(e) {
     var n = parseFloat(e.data);
     var p = String.fromCharCode(37); 
     document.getElementById("bar").style.height = n + p;
     document.getElementById("v").innerHTML = Math.round(n);
   }, false);
+
+  // Helper to handle Sliders
+  function setupSlider(eventLabel, elementId) {
+    src.addEventListener(eventLabel, function(e) {
+      document.getElementById(elementId).value = e.data;
+    }, false);
+  }
+
+  // Helper to handle Toggles
+  function setupToggle(eventLabel, elementId) {
+    src.addEventListener(eventLabel, function(e) {
+      document.getElementById(elementId).checked = (e.data === '1' || e.data === 'true');
+    }, false);
+  }
+
+  // Initialize all listeners
+  setupSlider('MorningAmount', 'sMor');
+  setupSlider('NoonAmount', 'sNoo');
+  setupSlider('EveningAmount', 'sEve');
+  
+  setupToggle('MorningToggle', 'tMor');
+  setupToggle('NoonToggle', 'tNoo');
+  setupToggle('EveningToggle', 'tEve');
 }
 </script>
 </body></html>)rawliteral";

@@ -89,17 +89,17 @@ void loop()
 {
   if ((millis() - lastTime) > timerDelay)
   {
-    Serial.printf("Temperature = %.2f ºC \n", 25);
-    Serial.printf("Humidity = %.2f \n", 34);
-    Serial.printf("Pressure = %.2f hPa \n", 85);
-    Serial.println();
+
 
     // Send Events to the Web Client with the Sensor Readings
     events.send("ping", NULL, millis());
-    events.send(String(millis()%5).c_str(), "temperature", millis());
-    events.send(String(millis() % 3).c_str(), "humidity", millis());
-    events.send(String(millis() % 7).c_str(), "pressure", millis());
-
+    events.send(String(millis() % 101).c_str(), "fodderAmount", millis());
+    events.send(String(millis() % 101).c_str(), "MorningAmount", millis());
+    events.send(String(millis() % 101).c_str(), "NoonAmount", millis());
+    events.send(String(100).c_str(), "EveningAmount", millis());
+    events.send(String(millis() % 2).c_str(), "MorningToggle", millis());
+    events.send(String(millis() % 2).c_str(), "NoonToggle", millis());
+    events.send(String(millis() % 2).c_str(), "EveningToggle", millis());
     lastTime = millis();
   }
 }
