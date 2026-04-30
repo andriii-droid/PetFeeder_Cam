@@ -47,10 +47,13 @@ int searchI2C()
 
 void sendI2C(byte id, byte msg)
 {
-  byte data[2] = {id, msg};
-  Wire.beginTransmission(slaveAdress); // Set the slave address
-  Wire.write(data, 2);                 // Send the command/data byte
-  Wire.endTransmission();
+  if (slaveAdress != -1)
+  {
+    byte data[2] = {id, msg};
+    Wire.beginTransmission(slaveAdress); // Set the slave address
+    Wire.write(data, 2);                 // Send the command/data byte
+    Wire.endTransmission();
+  } else { Serial.println("I2C: No data sent");}
 }
 
 void setupWifi()
