@@ -1,5 +1,6 @@
 #include <WiFi.h>
-#include <WebServer.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 #include <Wire.h>
 
 #define DEV_MODE 1 // Set to 1 for Dev, 0 for Production
@@ -13,38 +14,101 @@ const char *password = "";
 #endif
 
 // Create a web server object
-WebServer server(80);
-
+AsyncWebServer server(80);
+AsyncEventSource events("/events");
 int slaveAdress = -1;
 
-// Function to handle the root URL and show the current states
-void handleRoot()
+// Timer variables
+unsigned long lastTime = 0;
+unsigned long timerDelay = 30000;
+
+String processor(const String &var)
 {
-  String html = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
-  html += "<link rel=\"icon\" href=\"data:,\">";
-  html += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}";
-  html += ".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}";
-  html += ".button2 { background-color: #555555; }</style></head>";
-  html += "<body><h1>ESP32 Web Server</h1>";
-
-  html += "<p>Send I2C command</p>";
-  html += "<p><a href=\"/send\"><button class=\"button\">Send</button></a></p>";
-
-
-  html += "</body></html>";
-  server.send(200, "text/html", html);
-}
-
-void handleSendI2C() 
-{
-  if (slaveAdress != -1) {
-    Wire.beginTransmission(slaveAdress); // Set the slave address
-    Wire.write(0x01);             // Send the command/data byte
-    Wire.endTransmission();
-    Serial.println("Send 'Hello' over I2C");
+  
+  // Serial.println(var);
+  if (var == "TEMPERATURE")
+  {
+    return String(25);
   }
-  handleRoot();
+  else if (var == "HUMIDITY")
+  {
+    return String(34);
+  }
+  else if (var == "PRESSURE")
+  {
+    return String(85);
+  }
 }
+
+const char index_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE HTML><html>
+<head>
+  <title>ESP Web Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <link rel="icon" href="data:,">
+  <style>
+    html {font-family: Arial; display: inline-block; text-align: center;}
+    p { font-size: 1.2rem;}
+    body {  margin: 0;}
+    .topnav { overflow: hidden; background-color: #50B8B4; color: white; font-size: 1rem; }
+    .content { padding: 20px; }
+    .card { background-color: white; box-shadow: 2px 2px 12px 1px rgba(140,140,140,.5); }
+    .cards { max-width: 800px; margin: 0 auto; display: grid; grid-gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .reading { font-size: 1.4rem; }
+  </style>
+</head>
+<body>
+  <div class="topnav">
+    <h1>BME280 WEB SERVER (SSE)</h1>
+  </div>
+  <div class="content">
+    <div class="cards">
+      <div class="card">
+        <p><i class="fas fa-thermometer-half" style="color:#059e8a;"></i> TEMPERATURE</p><p><span class="reading"><span id="temp">%TEMPERATURE%</span> &deg;C</span></p>
+      </div>
+      <div class="card">
+        <p><i class="fas fa-tint" style="color:#00add6;"></i> HUMIDITY</p><p><span class="reading"><span id="hum">%HUMIDITY%</span> &percnt;</span></p>
+      </div>
+      <div class="card">
+        <p><i class="fas fa-angle-double-down" style="color:#e1e437;"></i> PRESSURE</p><p><span class="reading"><span id="pres">%PRESSURE%</span> hPa</span></p>
+      </div>
+    </div>
+  </div>
+<script>
+if (!!window.EventSource) {
+ var source = new EventSource('/events');
+ 
+ source.addEventListener('open', function(e) {
+  console.log("Events Connected");
+ }, false);
+ source.addEventListener('error', function(e) {
+  if (e.target.readyState != EventSource.OPEN) {
+    console.log("Events Disconnected");
+  }
+ }, false);
+ 
+ source.addEventListener('message', function(e) {
+  console.log("message", e.data);
+ }, false);
+ source.addEventListener('temperature', function(e) {
+    console.log("temperature", e.data);
+    document.getElementById("temp").innerHTML = e.data;
+  }, false);
+
+  source.addEventListener('humidity', function(e) {
+    console.log("humidity", e.data);
+    document.getElementById("hum").innerHTML = e.data;
+  }, false);
+
+  source.addEventListener('pressure', function(e) {
+    console.log("pressure", e.data);
+    document.getElementById("pres").innerHTML = e.data;
+  }, false);
+ }
+</script>
+</body>
+</html>)rawliteral";
 
 int searchI2C()
 {
@@ -88,13 +152,22 @@ void setup()
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-  // Set up the web server to handle different routes
-  server.on("/", handleRoot);
-  server.on("/send", handleSendI2C);
+  // Handle Web Server
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
+            { request->send(200, "text/html", index_html, processor); });
 
-  // Start the web server
+  // Handle Web Server Events
+  events.onConnect([](AsyncEventSourceClient *client)
+                   {
+    if(client->lastId()){
+      Serial.printf("Client reconnected! Last message ID that it got is: %u\n", client->lastId());
+    }
+    // send event with message "hello!", id current millis
+    // and set reconnect delay to 1 second
+    client->send("hello!", NULL, millis(), 10000); });
+  server.addHandler(&events);
   server.begin();
-  Serial.println("HTTP server started");
+  Serial.println("Server Started!");
 
   //Scanning for I2C Slave
   slaveAdress = searchI2C();
@@ -102,6 +175,19 @@ void setup()
 
 void loop()
 {
-  // Handle incoming client requests
-  server.handleClient();
+  if ((millis() - lastTime) > timerDelay)
+  {
+    Serial.printf("Temperature = %.2f ºC \n", 25);
+    Serial.printf("Humidity = %.2f \n", 34);
+    Serial.printf("Pressure = %.2f hPa \n", 85);
+    Serial.println();
+
+    // Send Events to the Web Client with the Sensor Readings
+    events.send("ping", NULL, millis());
+    events.send(String(25).c_str(), "temperature", millis());
+    events.send(String(34).c_str(), "humidity", millis());
+    events.send(String(85).c_str(), "pressure", millis());
+
+    lastTime = millis();
+  }
 }
