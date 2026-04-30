@@ -20,7 +20,7 @@ int slaveAdress = -1;
 
 // Timer variables
 unsigned long lastTime = 0;
-unsigned long timerDelay = 3000;
+unsigned long timerDelay = 30000;
 
 int searchI2C()
 {
@@ -102,6 +102,13 @@ void SSEEvents()
   Serial.println("Server Started!");
 }
 
+void sendI2C(byte id, byte msg)
+{
+  byte data[2] = {id, msg};
+  Wire.beginTransmission(slaveAdress); // Set the slave address
+  Wire.write(data, 2);                    // Send the command/data byte
+  Wire.endTransmission();
+}
 void setup()
 {
   Serial.begin(115200);
