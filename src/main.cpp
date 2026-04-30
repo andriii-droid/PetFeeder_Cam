@@ -45,11 +45,8 @@ int searchI2C()
   return slaveAddress;
 }
 
-void setup()
+void setupWifi()
 {
-  Serial.begin(115200);
-  Wire.begin();
-
   // Connect to Wi-Fi network
   Serial.print("Connecting to ");
   Serial.println(ssid);
@@ -63,13 +60,15 @@ void setup()
   Serial.println("WiFi connected.");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+}
 
-  // Note the NULL instead of 'processor' to stop the ESP from scanning for % signs
+void getRequests()
+{
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
             { request->send(200, "text/html", index_html); });
 
   server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request)
-              {
+            {
     String inputID;
     String inputVal;
     
@@ -80,14 +79,15 @@ void setup()
       Serial.print("Device: "); Serial.print(inputID);
       Serial.print(" - New Value: "); Serial.println(inputVal);
       
-      // Example: Logic to move a servo or flip a relay
-      if(inputID == "t1") {
+      if(inputID == "sNoo") {
         // digitalWrite(RELAY_PIN, inputVal.toInt());
       }
     }
-    request->send(200, "text/plain", "OK"); 
-  });
+    request->send(200, "text/plain", "OK"); });
+}
 
+void SSEEvents()
+{
   // Handle Web Server Events
   events.onConnect([](AsyncEventSourceClient *client)
                    {
@@ -100,8 +100,15 @@ void setup()
   server.addHandler(&events);
   server.begin();
   Serial.println("Server Started!");
+}
 
-  //Scanning for I2C Slave
+void setup()
+{
+  Serial.begin(115200);
+  Wire.begin();
+  setupWifi();
+  getRequests();
+  SSEEvents();
   slaveAdress = searchI2C();
 }
 
@@ -109,8 +116,6 @@ void loop()
 {
   if ((millis() - lastTime) > timerDelay)
   {
-
-
     // Send Events to the Web Client with the Sensor Readings
     events.send(String(millis() % 101).c_str(), "fodderAmount", millis());
     events.send(String(millis() % 101).c_str(), "MorningAmount", millis());
