@@ -146,6 +146,7 @@ void sendEvents(byte id, byte msg)
   {
     events.send(String(msg).c_str(), inputID, millis());
   }
+  Serial.println("Event sent");
 }
 
 void setup()
