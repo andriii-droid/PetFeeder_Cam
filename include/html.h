@@ -1,3 +1,5 @@
+#ifndef HTML_H // "If Not Defined"
+#define HTML_H
 #include <AsyncTCP.h>
 
 const char index_html[] PROGMEM = R"rawliteral(
@@ -165,3 +167,5 @@ document.querySelectorAll('.toggle-input').forEach(item => {
 });
 </script>
 </body></html>)rawliteral";
+
+#endif // HTML_H
