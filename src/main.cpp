@@ -4,6 +4,7 @@
 #include <html.h>
 #include <map>
 #include <string>
+#include "time.h"
 
 #define DEV_MODE 1 // Set to 1 for Dev, 0 for Production
 
@@ -18,6 +19,10 @@ const char *password = "";
 // Timer variables
 unsigned long lastTime = 0;
 unsigned long timerDelay = 5000;
+
+const char *ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = 3600; 
+const int daylightOffset_sec = 3600;
 
 // Create a web server object
 AsyncWebServer server(80);
@@ -37,7 +42,16 @@ std::map<String, byte> I2CID = {
 
 void setNewDate()
 {
-  events.send(String("now").c_str(), "lastUpdate", millis());
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo))
+  {
+    Serial.println("Failed to obtain time");
+    return;
+  }
+  // Format: YYYY-MM-DD HH:MM:SS
+  char buffer[25] = {"error"}; 
+  strftime(buffer, sizeof(buffer), "%d.%m.%y %H:%M:%S", &timeinfo);
+  events.send(String(buffer).c_str(), "lastUpdate", millis());
 }
 
 int searchI2C()
@@ -163,6 +177,7 @@ void setup()
   getRequests();
   SSEEvents();
   slaveAdress = searchI2C();
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 }
 
 void loop()
@@ -184,5 +199,6 @@ void loop()
       }
     }
     lastTime = millis();
+    // setNewDate();
   }
 }

@@ -97,7 +97,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             <label class="sw"><input type="checkbox" id="tEve" class="toggle-input"><span class="sld"></span></label>
         </div>
         <div class="small-text-wrapper">
-            <span class="small-text">Last updated: <span id="last_update">Never</span></span>
+            <span class="small-text">Last updated: <span id="last_update"></span></span>
         </div>
     </div>
   </div>
