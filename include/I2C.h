@@ -1,6 +1,7 @@
 #ifndef I2C_H // "If Not Defined"
 #define I2C_H
 #include <Wire.h>
+#include <Arduino.h>
 
 // Create a web server object
 extern int slaveAdress;

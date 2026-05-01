@@ -5,6 +5,7 @@
 #include <html.h>
 #include <I2C.h>
 #include <date.h>
+#include <Arduino.h>
 
 extern AsyncWebServer server;
 extern AsyncEventSource events;

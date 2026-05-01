@@ -1,7 +1,7 @@
-#include <WiFi.h>
 #include <I2C.h>
 #include <server.h>
 #include <string>
+#include <wifiSetup.h>
 
 #define DEV_MODE 1 // Set to 1 for Dev, 0 for Production
 
@@ -31,25 +31,8 @@ unsigned long lastTime = 0;
 unsigned long timerDelay = 5000;
 
 const char *ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = 3600; 
+const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
-
-void setupWifi()
-{
-  // Connect to Wi-Fi network
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-}
 
 void setup()
 {
