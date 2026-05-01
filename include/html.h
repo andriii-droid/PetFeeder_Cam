@@ -44,6 +44,18 @@ const char index_html[] PROGMEM = R"rawliteral(
   }
   
   .label-text { font-weight: bold; width: 60px; color: #333; flex-shrink: 0; font-size: 0.9rem; }
+  .small-text-wrapper {
+    width: 98%;           /* Match the .box width */
+    text-align: right;    /* Push content to the right */
+    padding-right: 5px;   /* Slight offset from the edge */
+    margin-top: -5px;     /* Pull it closer to the box above if desired */
+  }
+
+  .small-text { 
+    color: #888;          /* Slightly lighter for "subtle" look */
+    font-size: 0.6rem; 
+    font-family: monospace;
+  }
 
   /* Horizontal Slider */
   input[type=range] { 
@@ -84,6 +96,9 @@ const char index_html[] PROGMEM = R"rawliteral(
             <input type="range" min="0" max="100" id="sEve" class="slider-input">
             <label class="sw"><input type="checkbox" id="tEve" class="toggle-input"><span class="sld"></span></label>
         </div>
+        <div class="small-text-wrapper">
+            <span class="small-text">Last updated: <span id="last_update">Never</span></span>
+        </div>
     </div>
   </div>
 <script>
@@ -96,6 +111,11 @@ if (!!window.EventSource) {
     var p = String.fromCharCode(37); 
     document.getElementById("bar").style.height = n + p;
     document.getElementById("v").innerHTML = Math.round(n);
+  }, false);
+
+    // Last updated
+  src.addEventListener('lastUpdate', function(e) {
+    document.getElementById("last_update").innerHTML = e.data;
   }, false);
 
   // Helper to handle Sliders

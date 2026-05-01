@@ -35,6 +35,11 @@ std::map<String, byte> I2CID = {
     {"tEve", 6}
 };
 
+void setNewDate()
+{
+  events.send(String("now").c_str(), "lastUpdate", millis());
+}
+
 int searchI2C()
 {
   int slaveAddress = -1;
@@ -145,6 +150,7 @@ void sendEvents(byte id, byte msg)
   if (inputID != "")
   {
     events.send(String(msg).c_str(), inputID, millis());
+    setNewDate();
   }
   Serial.println("Event sent");
 }
