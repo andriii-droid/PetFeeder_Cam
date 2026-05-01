@@ -176,5 +176,6 @@ void loop()
         Serial.println("No Answer from Slave");
       }
     }
+    lastTime = millis();
   }
 }
