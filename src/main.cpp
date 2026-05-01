@@ -15,17 +15,17 @@ const char *ssid = "";
 const char *password = "";
 #endif
 
+// Timer variables
+unsigned long lastTime = 0;
+unsigned long timerDelay = 5000;
+
 // Create a web server object
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
 int slaveAdress = -1;
 
-// Timer variables
-unsigned long lastTime = 0;
-unsigned long timerDelay = 30000;
-
 //I2C IDs
-std::map<std::string, byte> I2CID = {
+std::map<String, byte> I2CID = {
     {"fodderAmount", 0},
     {"sMor", 1},
     {"tMor", 2},
@@ -102,7 +102,7 @@ void getRequests()
       
       uint8_t byteVal = (uint8_t)constrain(inputVal.toInt(), 0, 255);
 
-      byte id = I2CID[inputID.c_str()];
+      byte id = I2CID[inputID];
       sendI2C(id, byteVal);
 
       Serial.print("ID: ");
@@ -129,6 +129,24 @@ void SSEEvents()
   Serial.println("Server Started!");
 }
 
+void sendEvents(byte id, byte msg)
+{
+  String inputID = "";
+
+  for (auto const &entry : I2CID)
+  {
+    if (entry.second == id)
+    {
+      inputID = entry.first;
+      break;
+    }
+  }
+
+  if (inputID != "")
+  {
+    events.send(String(msg).c_str(), inputID, millis());
+  }
+}
 
 void setup()
 {
@@ -142,16 +160,17 @@ void setup()
 
 void loop()
 {
-  if ((millis() - lastTime) > timerDelay)
+  if ((millis() - lastTime) > timerDelay) //Poll the I2C Slaves every 5 Seconds
   {
-    // Send Events to the Web Client with the Sensor Readings
-    events.send(String(millis() % 101).c_str(), "fodderAmount", millis());
-    events.send(String(millis() % 101).c_str(), "MorningAmount", millis());
-    events.send(String(millis() % 101).c_str(), "NoonAmount", millis());
-    events.send(String(millis() % 101).c_str(), "EveningAmount", millis());
-    events.send(String(millis() % 2).c_str(), "MorningToggle", millis());
-    events.send(String(millis() % 2).c_str(), "NoonToggle", millis());
-    events.send(String(millis() % 2).c_str(), "EveningToggle", millis());
-    lastTime = millis();
+    if (slaveAdress != -1) {
+      Wire.requestFrom(slaveAdress, 2); //Holds Exec here until Bytes transmitted from Slave
+
+      while (Wire.available())
+      {
+        byte id = Wire.read();
+        byte msg = Wire.read();
+        sendEvents(id, msg);  //Send Event to Webserver
+      }
+    }
   }
 }
