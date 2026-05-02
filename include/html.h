@@ -12,12 +12,12 @@ const char index_html[] PROGMEM = R"rawliteral(
   #header { background: #50B8B4; color: white; padding: 15px; text-align: center; font-size: 1.5rem; font-weight: bold; flex-shrink: 0; }
   
   /* Layout Wrapper */
-  #wrapper { display: flex; flex-grow: 1; height: 100%; overflow: hidden; }
+  #wrapper { display: flex; flex-grow: 1; height: 100%%; overflow: hidden; }
 
   /* Sidebar */
   #side { width: 70px; background: #222; color: #fff; display: flex; flex-direction: column; align-items: center; padding: 20px 0; flex-shrink: 0; }
   #track { width: 20px; height: 60vh; background: #444; border-radius: 10px; display: flex; flex-direction: column-reverse; }
-  #bar { width: 100%; height: 0px; background: #00acc1; border-radius: 10px; transition: 0.3s; }
+  #bar { width: 100%%; height: 0px; background: #00acc1; border-radius: 10px; transition: 0.3s; }
 
   /* Main Content - Tightened vertical spacing */
   #main { 
@@ -37,7 +37,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     padding: 15px 20px; /* Reduced vertical padding */
     border-radius: 10px; 
     box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
-    width: 98%; 
+    width: 98%%; 
     display: flex; 
     align-items: center; 
     gap: 15px; 
@@ -47,7 +47,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   
   .label-text { font-weight: bold; width: 60px; color: #333; flex-shrink: 0; font-size: 0.9rem; }
   .small-text-wrapper {
-    width: 98%;           /* Match the .box width */
+    width: 98%%;           /* Match the .box width */
     text-align: right;    /* Push content to the right */
     padding-right: 5px;   /* Slight offset from the edge */
     margin-top: -5px;     /* Pull it closer to the box above if desired */
@@ -71,7 +71,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   .sw { position: relative; display: block; width: 44px; height: 22px; flex-shrink: 0; }
   .sw input { opacity: 0; width: 0; height: 0; }
   .sld { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #ccc; border-radius: 34px; transition: 0.4s; }
-  .sld:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.4s; }
+  .sld:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%%; transition: 0.4s; }
   input:checked + .sld { background: #50B8B4; }
   input:checked + .sld:before { transform: translateX(22px); }
 </style>
@@ -80,7 +80,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   <div id="wrapper">
     <div id="side">
       <div id="track"><div id="bar"></div></div>
-      <div style="margin-top:10px; font-size: 14px;"><span id="v">0</span>%</div>
+      <div style="margin-top:10px; font-size: 14px;"><span id="v">0</span>%%</div>
     </div>
     <div id="main">
         <div class="box">
@@ -99,7 +99,7 @@ const char index_html[] PROGMEM = R"rawliteral(
             <label class="sw"><input type="checkbox" id="tEve" class="toggle-input"><span class="sld"></span></label>
         </div>
         <div class="small-text-wrapper">
-            <span class="small-text">Last updated: <span id="last_update"></span></span>
+            <span class="small-text">Last updated: <span id="last_update">%last%</span></span>
         </div>
     </div>
   </div>

@@ -3,7 +3,8 @@
 void setupServer()
 {
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-              { request->send(200, "text/html", index_html); });
+              {
+    request->send(200, "text/html", String(index_html), processor); });
 
     server.on("/update", HTTP_GET, [](AsyncWebServerRequest *request)
               {
@@ -62,4 +63,14 @@ void sendEvents(byte id, byte msg)
         setNewDate();
     }
     Serial.println("Event sent");
+}
+
+String processor(const String &var)
+{
+    if (var == "") {
+        return "%";
+    } else if (var == "last")
+    {
+        return String(0); // Whatever variable holds your timestamp
+    }
 }

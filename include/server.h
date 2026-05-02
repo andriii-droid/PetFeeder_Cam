@@ -19,4 +19,6 @@ void SSEEvents();
 
 void sendEvents(byte id, byte msg);
 
+String processor(const String &var);
+
 #endif // SERVER_H
