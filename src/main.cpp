@@ -2,7 +2,7 @@
 #include <server.h>
 #include <string>
 #include <wifiSetup.h>
-// #include <date.h>
+#include <date.h>
 #include <time.h>
 
 #define DEV_MODE 1 // Set to 1 for Dev, 0 for Production
