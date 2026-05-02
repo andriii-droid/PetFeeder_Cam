@@ -60,7 +60,7 @@ void sendEvents(byte id, byte msg)
     if (inputID != "")
     {
         events.send(String(msg).c_str(), inputID, millis());
-        setNewDate();
+        setDate();
     }
     Serial.println("Event sent");
 }
@@ -69,8 +69,9 @@ String processor(const String &var)
 {
     if (var == "") {
         return "%";
-    } else if (var == "last")
-    {
-        return String(0); // Whatever variable holds your timestamp
+    } else if (var == "last") {
+        return tmToString(timeinfo).c_str();
+    } else {
+        return "Error";
     }
 }

@@ -2,6 +2,8 @@
 #include <server.h>
 #include <string>
 #include <wifiSetup.h>
+// #include <date.h>
+#include <time.h>
 
 #define DEV_MODE 1 // Set to 1 for Dev, 0 for Production
 
@@ -39,16 +41,19 @@ void setup()
   Serial.begin(115200);
   Wire.begin();
   setupWifi();
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   setupServer();
   SSEEvents();
   slaveAdress = searchI2C();
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  getLocalTime(&timeinfo, 2000);
+  Serial.println(&timeinfo);
 }
 
 void loop()
 {
   if ((millis() - lastTime) > timerDelay) //Poll the I2C Slaves every 5 Seconds
   {
+    getLocalTime(&timeinfo, 2000);
     if (slaveAdress != -1) {
       byte receivedCount = Wire.requestFrom(slaveAdress, 1); // Holds Exec here until Bytes transmitted from Slave
 
