@@ -12,6 +12,13 @@ extern AsyncEventSource events;
 
 // I2C IDs
 extern std::map<String, byte> I2CID;
+struct dataStruct
+{
+    String str;
+    byte id;
+    byte data;
+};
+extern dataStruct webData[7];
 
 void setupServer();
 

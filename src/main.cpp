@@ -18,12 +18,7 @@ const char *password = "";
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
 
-struct dataStruct
-{
-  String str;
-  byte id;
-  byte data;
-};
+
 
 dataStruct webData[7] = {
     {"fodderAmount", 0, 0},

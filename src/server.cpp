@@ -1,6 +1,7 @@
 #include <server.h>
 
-void setupServer()
+    void
+    setupServer()
 {
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               {
@@ -17,7 +18,13 @@ void setupServer()
         
         uint8_t byteVal = (uint8_t)constrain(inputVal.toInt(), 0, 255);
 
-        byte id = I2CID[inputID];
+        byte id = 0;
+        for (auto &entry : webData) {
+            if (entry.str == inputID) {
+                id = entry.id;
+                break;
+            }
+        }
         sendI2C(id, byteVal);
 
         Serial.print("ID: ");
@@ -48,11 +55,12 @@ void sendEvents(byte id, byte msg)
 {
     String inputID = "";
 
-    for (auto const &entry : I2CID)
+    for (auto &entry : webData)
     {
-        if (entry.second == id)
+        if (entry.id == id)
         {
-            inputID = entry.first;
+            inputID = entry.str;
+            entry.data = msg;
             break;
         }
     }
