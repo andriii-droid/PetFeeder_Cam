@@ -17,14 +17,33 @@ const char *password = "";
 
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
-std::map<String, byte> I2CID = {
-    {"fodderAmount", 0},
-    {"sMor", 1},
-    {"tMor", 2},
-    {"sNoo", 3},
-    {"tNoo", 4},
-    {"sEve", 5},
-    {"tEve", 6}};
+
+struct dataStruct
+{
+  String str;
+  byte id;
+  byte data;
+};
+
+dataStruct webData[7] = {
+    {"fodderAmount", 0, 0},
+    {"sMor", 1, 0},
+    {"tMor", 2, 0},
+    {"sNoo", 3, 0},
+    {"tNoo", 4, 0},
+    {"sEve", 5, 0},
+    {"tEve", 6, 0}
+};
+
+std::map<String, byte>
+    I2CID = {
+        {"fodderAmount", 0},
+        {"sMor", 1},
+        {"tMor", 2},
+        {"sNoo", 3},
+        {"tNoo", 4},
+        {"sEve", 5},
+        {"tEve", 6}};
 
 int slaveAdress = -1;
 
