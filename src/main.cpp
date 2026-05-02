@@ -50,17 +50,34 @@ void loop()
   if ((millis() - lastTime) > timerDelay) //Poll the I2C Slaves every 5 Seconds
   {
     if (slaveAdress != -1) {
-      byte receivedCount = Wire.requestFrom(slaveAdress, 2); // Holds Exec here until Bytes transmitted from Slave
+      byte receivedCount = Wire.requestFrom(slaveAdress, 1); // Holds Exec here until Bytes transmitted from Slave
 
-      if (receivedCount == 2) {
-        while (Wire.available())
+      if (receivedCount == 1) {
+        byte idCount = 0;
+         while (Wire.available())
         {
-          byte id = Wire.read();
-          byte msg = Wire.read();
-          sendEvents(id, msg);  //Send Event to Webserver
+          idCount = Wire.read();
         }
-      } else {
-        Serial.println("No Answer from Slave");
+        if (idCount != 0) {
+          receivedCount = Wire.requestFrom(slaveAdress, idCount*2);
+
+          if (receivedCount == idCount*2)
+          {
+            while (Wire.available())
+            {
+              byte id = Wire.read();
+              byte msg = Wire.read();
+              sendEvents(id, msg); // Send Event to Webserver
+            }
+          }
+          else
+          {
+            Serial.println("No Answer from Slave");
+          }
+        } else 
+        {
+          Serial.println("No new data to send");
+        }
       }
     }
     lastTime = millis();
