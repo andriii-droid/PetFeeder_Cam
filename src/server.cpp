@@ -1,7 +1,6 @@
 #include <server.h>
 
-    void
-    setupServer()
+void setupServer()
 {
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               {
@@ -70,11 +69,16 @@ void sendEvents(byte id, byte msg)
         events.send(String(msg).c_str(), inputID, millis());
         setDate();
     }
-    Serial.println("Event sent");
+    Serial.print("ID: ");
+    Serial.print(inputID);
+    Serial.print(" - Value: ");
+    Serial.println(msg);
 }
 
 String processor(const String &var)
 {
+    updateValues = true;
+
     if (var == "") {
         return "%";
     } else if (var == "last") {

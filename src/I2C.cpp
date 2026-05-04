@@ -1,4 +1,5 @@
 #include <I2C.h>
+#include <server.h>
 
 int searchI2C()
 {
@@ -25,6 +26,15 @@ int searchI2C()
 
 void sendI2C(byte id, byte msg)
 {
+    for (auto &entry : webData)
+    {
+        if (entry.id == id)
+        {
+            entry.data = msg;
+            break;
+        }
+    }
+
     if (slaveAdress != -1)
     {
         byte data[2] = {id, msg};

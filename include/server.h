@@ -18,6 +18,7 @@ struct dataStruct
     byte data;
 };
 extern dataStruct webData[7];
+extern bool updateValues;
 
 void setupServer();
 

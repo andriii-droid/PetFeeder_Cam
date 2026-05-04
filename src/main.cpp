@@ -30,6 +30,8 @@ dataStruct webData[7] = {
 
 int slaveAdress = -1;
 
+bool updateValues = false;
+
 // Timer variables
 unsigned long lastTime = 0;
 unsigned long timerDelay = 5000;
@@ -53,6 +55,16 @@ void setup()
 
 void loop()
 {
+  if (updateValues)
+  {
+    updateValues = false;
+    delay(1000);
+
+    for (auto &entry : webData)
+    {
+      sendEvents(entry.id, entry.data);
+    }
+  }
   if ((millis() - lastTime) > timerDelay) //Poll the I2C Slaves every 5 Seconds
   {
     getLocalTime(&timeinfo, 2000);

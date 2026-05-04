@@ -135,13 +135,13 @@ if (!!window.EventSource) {
   }
 
   // Initialize all listeners
-  setupSlider('MorningAmount', 'sMor');
-  setupSlider('NoonAmount', 'sNoo');
-  setupSlider('EveningAmount', 'sEve');
+  setupSlider('sMor', 'sMor');
+  setupSlider('sNoo', 'sNoo');
+  setupSlider('sEve', 'sEve');
   
-  setupToggle('MorningToggle', 'tMor');
-  setupToggle('NoonToggle', 'tNoo');
-  setupToggle('EveningToggle', 'tEve');
+  setupToggle('tMor', 'tMor');
+  setupToggle('tNoo', 'tNoo');
+  setupToggle('tEve', 'tEve');
 }
 
 //Input Handling
