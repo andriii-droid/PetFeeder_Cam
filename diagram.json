@@ -55,6 +55,18 @@
   ],
   "connections": [
     [
+      "esp:TX",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "esp:RX",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
       "esp:22",
       "chip1:SCL",
       "green",
@@ -118,6 +130,23 @@
       [
         "v0"
       ]
+    ],
+    [
+      "esp:GND.1",
+      "chip1:GND",
+      "black",
+      [
+        "h-50",
+        "v80",
+        "h330",
+        "v50"
+      ]
+    ],
+    [
+      "esp:3V3",
+      "chip1:VCC",
+      "red",
+      ["v-50", "h300", "v50"]
     ]
   ],
   "dependencies": {}
