@@ -18,14 +18,17 @@ const char *password = "";
 AsyncWebServer server(80);
 AsyncEventSource events("/events");
 
-dataStruct webData[7] = {
+dataStruct webData[10] = {
     {"fodderAmount", 0, 0},
-    {"sMor", 1, 0},
-    {"tMor", 2, 0},
-    {"sNoo", 3, 0},
-    {"tNoo", 4, 0},
-    {"sEve", 5, 0},
-    {"tEve", 6, 0}
+    {"sMor", 1, 50, 1},
+    {"tMor", 2, 0, 1},
+    {"sNoo", 3, 50, 1},
+    {"tNoo", 4, 0, 1},
+    {"sEve", 5, 50, 1},
+    {"tEve", 6, 0, 1},
+    {"iMor", 7, 900, 2},
+    {"iNoo", 8, 1200, 2},
+    {"iEve", 9, 1800, 2}
 };
 
 int slaveAdress = -1;

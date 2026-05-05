@@ -24,7 +24,7 @@ int searchI2C()
     return slaveAddress;
 }
 
-void sendI2C(byte id, byte msg)
+void sendI2C(byte id, uint16_t msg)
 {
     for (auto &entry : webData)
     {
@@ -37,9 +37,13 @@ void sendI2C(byte id, byte msg)
 
     if (slaveAdress != -1)
     {
-        byte data[2] = {id, msg};
+        byte data[3];
+        data[0] = id;                
+        data[1] = (msg >> 8) & 0xFF; 
+        data[2] = msg & 0xFF;
+
         Wire.beginTransmission(slaveAdress); // Set the slave address
-        Wire.write(data, 2);                 // Send the command/data byte
+        Wire.write(data, 3);                 // Send the command/data byte
         Wire.endTransmission();
     }
     else

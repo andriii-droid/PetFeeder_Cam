@@ -46,6 +46,17 @@ const char index_html[] PROGMEM = R"rawliteral(
   }
   
   .label-text { font-weight: bold; width: 60px; color: #333; flex-shrink: 0; font-size: 0.9rem; }
+
+  .time-input {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 3px;
+    font-family: inherit;
+    color: #333;
+    outline: none;
+    flex-shrink: 0;
+  }
+
   .small-text-wrapper {
     width: 98%%;           /* Match the .box width */
     text-align: right;    /* Push content to the right */
@@ -85,16 +96,19 @@ const char index_html[] PROGMEM = R"rawliteral(
     <div id="main">
         <div class="box">
             <span class="label-text">Morgen</span>
+            <input type="time" id="iMor" class="time-input">
             <input type="range" min="0" max="100" id="sMor" class="slider-input">
             <label class="sw"><input type="checkbox" id="tMor" class="toggle-input"><span class="sld"></span></label>
         </div>
         <div class="box">
-            <span class="label-text">Mittag</span>
+           <span class="label-text">Mittag</span>
+            <input type="time" id="iNoo" class="time-input">
             <input type="range" min="0" max="100" id="sNoo" class="slider-input">
             <label class="sw"><input type="checkbox" id="tNoo" class="toggle-input"><span class="sld"></span></label>
         </div>
         <div class="box">
             <span class="label-text">Abend</span>
+            <input type="time" id="iEve" class="time-input">
             <input type="range" min="0" max="100" id="sEve" class="slider-input">
             <label class="sw"><input type="checkbox" id="tEve" class="toggle-input"><span class="sld"></span></label>
         </div>
@@ -120,8 +134,15 @@ if (!!window.EventSource) {
     document.getElementById("last_update").innerHTML = e.data;
   }, false);
 
-  // Helper to handle Sliders
+  // Helper to handle Time Inputs
   function setupSlider(eventLabel, elementId) {
+    src.addEventListener(eventLabel, function(e) {
+      document.getElementById(elementId).value = e.data;
+    }, false);
+  }
+
+  // Helper to handle Sliders
+  function setupTime(eventLabel, elementId) {
     src.addEventListener(eventLabel, function(e) {
       document.getElementById(elementId).value = e.data;
     }, false);
@@ -142,6 +163,11 @@ if (!!window.EventSource) {
   setupToggle('tMor', 'tMor');
   setupToggle('tNoo', 'tNoo');
   setupToggle('tEve', 'tEve');
+
+  setupTime('iMor', 'iMor');
+  setupTime('iNoo', 'iNoo');
+  setupTime('iEve', 'iEve');
+
 }
 
 //Input Handling
@@ -163,6 +189,13 @@ document.querySelectorAll('.toggle-input').forEach(item => {
   item.addEventListener('change', event => {
     let val = event.target.checked ? 1 : 0;
     updateESP(event.target.id, val);
+  });
+});
+
+// Attach listeners to all Times
+document.querySelectorAll('.time-input').forEach(item => {
+  item.addEventListener('input', event => {
+    updateESP(event.target.id, event.target.value);
   });
 });
 </script>

@@ -14,22 +14,35 @@ void setupServer()
         if (request->hasParam("id") && request->hasParam("val")) {
         inputID = request->getParam("id")->value();
         inputVal = request->getParam("val")->value();
-        
-        uint8_t byteVal = (uint8_t)constrain(inputVal.toInt(), 0, 255);
 
-        byte id = 0;
-        for (auto &entry : webData) {
-            if (entry.str == inputID) {
-                id = entry.id;
-                break;
+            uint16_t byteVal;
+            uint8_t len;
+            if (inputVal.length() == 5)
+            {
+                int hours = inputVal.substring(0, 2).toInt();
+                int minutes = inputVal.substring(3, 5).toInt();
+                byteVal = (hours * 100) + minutes;
+                len = 2;
+            } else {
+                byteVal = (uint8_t)constrain(inputVal.toInt(), 0, 255);
+                len = 1;
             }
-        }
-        sendI2C(id, byteVal);
 
-        Serial.print("ID: ");
-        Serial.print(id);
-        Serial.print(" - New Value: ");
-        Serial.println(byteVal);
+            byte id = 0;
+            for (auto &entry : webData)
+            {
+                if (entry.str == inputID)
+                {
+                    id = entry.id;
+                    break;
+                }
+            }
+            sendI2C(id, byteVal);
+
+            Serial.print("ID: ");
+            Serial.print(id);
+            Serial.print(" - New Value: ");
+            Serial.println(byteVal);
         }
         request->send(200, "text/plain", "OK"); 
     });
@@ -50,7 +63,7 @@ void SSEEvents()
     Serial.println("Server Started!");
 }
 
-void sendEvents(byte id, byte msg)
+void sendEvents(byte id, uint16_t msg)
 {
     String inputID = "";
 
@@ -66,7 +79,16 @@ void sendEvents(byte id, byte msg)
 
     if (inputID != "")
     {
-        events.send(String(msg).c_str(), inputID, millis());
+        if (inputID.startsWith("i")) { // If its a time we convert it to a Time string
+            int hours = msg / 100;  
+            int minutes = msg % 100; 
+
+            String formattedTime = (hours < 10 ? "0" : "") + String(hours) + ":" +
+                                   (minutes < 10 ? "0" : "") + String(minutes);
+            events.send(formattedTime.c_str(), inputID, millis());
+        } else {
+            events.send(String(msg).c_str(), inputID, millis());
+        }
         setDate();
     }
     Serial.print("ID: ");
@@ -75,7 +97,7 @@ void sendEvents(byte id, byte msg)
     Serial.println(msg);
 }
 
-String processor(const String &var)
+    String processor(const String &var)
 {
     updateValues = true;
 
@@ -83,7 +105,9 @@ String processor(const String &var)
         return "%";
     } else if (var == "last") {
         return tmToString(timeinfo).c_str();
-    } else {
+    }
+    else
+    {
         return "Error";
     }
 }

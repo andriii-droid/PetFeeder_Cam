@@ -15,16 +15,18 @@ struct dataStruct
 {
     String str;
     byte id;
-    byte data;
+    uint16_t data;
+    byte dataLen;
 };
-extern dataStruct webData[7];
+extern dataStruct webData[10];
 extern bool updateValues;
 
 void setupServer();
 
 void SSEEvents();
 
-void sendEvents(byte id, byte msg);
+void sendEvents(byte id, uint16_t msg);
+
 
 String processor(const String &var);
 

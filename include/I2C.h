@@ -8,6 +8,6 @@ extern int slaveAdress;
 
 int searchI2C();
 
-void sendI2C(byte id, byte msg);
+void sendI2C(byte id, uint16_t msg);
 
 #endif // I2C_H
