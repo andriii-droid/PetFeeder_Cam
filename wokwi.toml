@@ -1,6 +1,5 @@
 [wokwi]
 version = 1
-
 firmware = '.pio/build/esp32cam/firmware.bin'
 elf = '.pio/build/esp32cam/firmware.elf'
 
@@ -9,6 +8,6 @@ from = "localhost:8180"
 to = "target:80"
 
 [[chip]]
-name   = "i2c-mock"       # This must match the 'type' in diagram.json (minus the 'chip-' prefix)
-binary = "chips/i2c-mock.chip.wasm"   # Path to your compiled WASM file
-json   = "chips/i2c-mock.chip.json"
+name = "i2c-mock"
+binary = "chips/i2c-mock.chip.wasm"
+json = "chips/i2c-mock.chip.json"
