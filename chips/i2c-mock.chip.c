@@ -44,19 +44,13 @@ static bool on_i2c_event(void *user_data, i2c_event_t event, uint8_t data)
     {
     case I2C_START_WRITE:
     case I2C_START_READ:
-        // Returning true here sends an ACK to the master
         return true;
-
     case I2C_WRITE:
-        // The first byte after START_WRITE is usually the register pointer
         chip->current_reg = data % 8;
         return true;
 
     case I2C_READ:
         i2c_respond(chip->sda_pin, chip->regs[chip->current_reg]);
-        return true;
-
-    case I2C_STOP:
         return true;
 
     default:
