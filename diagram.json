@@ -45,6 +45,15 @@
       "attrs": {
         "color": "green"
       }
+    },
+    {
+      "type": "chip-i2c-mock",
+      "id": "sensor1",
+      "pos": [
+        200,
+        200
+      ],
+      "attr": {}
     }
   ],
   "connections": [

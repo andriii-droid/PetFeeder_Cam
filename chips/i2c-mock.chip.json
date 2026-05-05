@@ -1,0 +1,11 @@
+{
+    "name": "i2c-mock",
+    "author": "Andri",
+    "pins": [
+        "SCL",
+        "SDA",
+        "VCC",
+        "GND"
+    ],
+    "controls": []
+}
