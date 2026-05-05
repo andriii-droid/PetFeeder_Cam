@@ -29,6 +29,24 @@
       }
     },
     {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": 109.55,
+      "left": 150,
+      "attrs": {
+        "value": "1000"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r4",
+      "top": 119.15,
+      "left": 150,
+      "attrs": {
+        "value": "1000"
+      }
+    },
+    {
       "type": "wokwi-led",
       "id": "led1",
       "top": 34.8,
@@ -147,6 +165,43 @@
       "chip1:VCC",
       "red",
       ["v-50", "h300", "v50"]
+    ],
+    [
+      "esp:3V3",
+      "r3:2",
+      "red",
+      [
+        "v-50",
+        "h300",
+        "v50"
+      ]
+    ],
+    [
+      "esp:3V3",
+      "r4:2",
+      "red",
+      [
+        "v-50",
+        "h300",
+        "v50"
+      ]
+    ],
+    [
+      "r3:1",
+      "chip1:SDA",
+      "yellow",
+      [
+       "h-20", "v10"
+      ]
+    ],
+    [
+      "r4:1",
+      "chip1:SCL",
+      "green",
+      [
+        "h-34",
+        "v10"
+      ]
     ]
   ],
   "dependencies": {}
