@@ -83,7 +83,7 @@ void loop()
         if (idCount != 0) {
           receivedCount = Wire.requestFrom(slaveAdress, idCount*2);
 
-          if (receivedCount == idCount*2)
+          if (receivedCount == idCount*3)
           {
             while (Wire.available())
             {
