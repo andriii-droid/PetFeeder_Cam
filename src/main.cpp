@@ -94,11 +94,12 @@ void loop()
           }
           else
           {
-            Serial.println("No Answer from Slave");
+            Serial.print(receivedCount);
+            Serial.println(" No Answer from Slave");
           }
         } else 
         {
-          Serial.println("No new data to send");
+          Serial.println("Slave has no new data");
         }
       }
     }

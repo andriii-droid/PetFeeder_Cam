@@ -39,11 +39,11 @@ bool on_i2c_connect(void *user_data, uint32_t address, bool connect)
     return true; /* Ack */
 }
 
-uint8_t on_i2c_read(void *user_data)
+uint8_t on_i2c_read(void *user_data) //When Data requested
 {
     printf("Sending byte to controller: ");
-    printf("%x\n", 0x2f);
-    return 0x2f;
+    printf("%x\n", 0x01);
+    return 0x01;
 }
 
 bool on_i2c_write(void *user_data, uint8_t data)
