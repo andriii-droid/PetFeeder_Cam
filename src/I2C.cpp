@@ -79,7 +79,7 @@ void receiveI2C()
                 receivedCount = Wire.requestFrom(slaveAdress, 2);
                 if (receivedCount == 2)
                 {
-                    uint16_t data = (Wire.read() * 10) + Wire.read();
+                    uint16_t data = (uint16_t)Wire.read() << 8 | Wire.read();
 
                     Serial.print("I2C Received - ID: ");
                     Serial.print(id);
