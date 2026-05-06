@@ -73,36 +73,25 @@ void loop()
     getLocalTime(&timeinfo, 2000);
     if (slaveAdress != -1) {
       byte receivedCount = Wire.requestFrom(slaveAdress, 1); // Holds Exec here until Bytes transmitted from Slave
-
       if (receivedCount == 1) {
-        byte idCount = 0;
-         while (Wire.available())
-        {
-          idCount = Wire.read();
-        }
-        if (idCount != 0) {
-          receivedCount = Wire.requestFrom(slaveAdress, idCount*2);
+        byte id = Wire.read();
+        uint16_t data = 0;
 
-          if (receivedCount == idCount*3)
+        if (id != -1) {
+          receivedCount = Wire.requestFrom(slaveAdress, 2);
+
+          if (receivedCount == 2)
           {
-            while (Wire.available())
-            {
-              byte id = Wire.read();
-              byte msg = Wire.read();
-              sendEvents(id, msg); // Send Event to Webserver
-            }
+            data = Wire.read() *10;
+            data += Wire.read();
           }
-          else
-          {
-            Serial.print(receivedCount);
-            Serial.println(" No Answer from Slave");
-          }
-        } else 
-        {
-          Serial.println("Slave has no new data");
+          Serial.print("ID: ");
+          Serial.println(id);
+          Serial.print("Value: ");
+          Serial.println(data);
         }
-      }
-    }
+        else (Serial.println("No Valid Data left"));
+      } else (Serial.println("No Answer from Slave")); }
     lastTime = millis();
   }
 }
