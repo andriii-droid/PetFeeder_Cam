@@ -1,76 +1,59 @@
-#include <stdint.h>
-#include <stdbool.h>
+#include "wokwi-api.h"
+#include <stdio.h>
 #include <stdlib.h>
 
-/* Manually defining the Wokwi I2C API to bypass header issues */
-typedef enum
-{
-    I2C_START_READ,
-    I2C_START_WRITE,
-    I2C_WRITE,
-    I2C_READ,
-    I2C_STOP,
-} i2c_event_t;
-
-typedef bool (*i2c_event_handler_t)(void *user_data, i2c_event_t event, uint8_t data);
+const int ADDRESS = 0x22;
 
 typedef struct
 {
-    uint32_t address;
-    uint32_t scl;
-    uint32_t sda;
-    i2c_event_handler_t event;
-    void *user_data;
-} i2c_config_t;
-
-// Wokwi API Prototypes
-void i2c_init(const i2c_config_t *config);
-void i2c_respond(uint32_t sda_pin, uint8_t data);
-uint32_t pin_init(const char *name, uint32_t mode);
-#define INPUT 0
-
-typedef struct
-{
-    uint32_t sda_pin;
-    uint8_t regs[8];
-    uint8_t current_reg;
+    pin_t pin_vcc;
+    pin_t pin_gnd;
+    pin_t pin_scl;
+    pin_t pin_sda;
 } chip_state_t;
 
-static bool on_i2c_event(void *user_data, i2c_event_t event, uint8_t data)
-{
-    chip_state_t *chip = (chip_state_t *)user_data;
-
-    switch (event)
-    {
-    case I2C_START_WRITE:
-    case I2C_START_READ:
-        return true;
-    case I2C_WRITE:
-        chip->current_reg = data % 8;
-        return true;
-
-    case I2C_READ:
-        i2c_respond(chip->sda_pin, chip->regs[chip->current_reg]);
-        return true;
-
-    default:
-        return true;
-    }
-}
+static bool on_i2c_connect(void *user_data, uint32_t address, bool connect);
+static uint8_t on_i2c_read(void *user_data);
+static bool on_i2c_write(void *user_data, uint8_t data);
+static void on_i2c_disconnect(void *user_data);
 
 void chip_init()
 {
     chip_state_t *chip = malloc(sizeof(chip_state_t));
-    for (int i = 0; i < 8; i++)
-        chip->regs[i] = i * 10;
 
     const i2c_config_t i2c_config = {
-        .address = 0x42,
-        .scl = pin_init("SCL", INPUT),
-        .sda = pin_init("SDA", INPUT),
-        .event = on_i2c_event,
         .user_data = chip,
+        .address = ADDRESS,
+        .scl = pin_init("SCL", INPUT_PULLUP),
+        .sda = pin_init("SDA", INPUT_PULLUP),
+        .connect = on_i2c_connect,
+        .read = on_i2c_read,
+        .write = on_i2c_write,
+        .disconnect = on_i2c_disconnect, // Optional
     };
-    chip->sda_pin = i2c_config.sda;
     i2c_init(&i2c_config);
+}
+
+bool on_i2c_connect(void *user_data, uint32_t address, bool connect)
+{
+    return true; /* Ack */
+}
+
+uint8_t on_i2c_read(void *user_data)
+{
+    printf("Sending byte to controller: ");
+    printf("%x\n", 0x2f);
+    return 0x2f;
+}
+
+bool on_i2c_write(void *user_data, uint8_t data)
+{
+    printf("Getting data from controller: ");
+    printf("%x", data);
+    printf("\n");
+    return true; // Ack
+}
+
+void on_i2c_disconnect(void *user_data)
+{
 }
