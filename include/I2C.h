@@ -10,4 +10,6 @@ int searchI2C();
 
 void sendI2C(byte id, uint16_t msg);
 
+void receiveI2C();
+
 #endif // I2C_H

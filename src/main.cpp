@@ -71,42 +71,7 @@ void loop()
   if ((millis() - lastTime) > timerDelay) //Poll the I2C Slaves every 5 Seconds
   {
     getLocalTime(&timeinfo, 2000);
-    if (slaveAdress != -1)
-    {
-      while(1)
-      {
-        byte receivedCount = Wire.requestFrom(slaveAdress, 1);
-
-        if (receivedCount == 1)
-        {
-          byte id = Wire.read();
-
-          if (id == 255)
-          {
-            Serial.println("No Valid Data left");
-            break; // Exit the Loop if no Data left
-          }
-
-          // 2. If ID is valid, get the 2 bytes of data
-          receivedCount = Wire.requestFrom(slaveAdress, 2);
-          if (receivedCount == 2)
-          {
-            uint16_t data = (Wire.read() * 10) + Wire.read();
-
-            Serial.print("ID: ");
-            Serial.print(id);
-            Serial.print(" | Value: ");
-            Serial.println(data);
-            sendEvents(id, data);
-          }
-        }
-        else
-        {
-          Serial.println("No Answer from Slave");
-          break; // Exit if the slave is disconnected
-        }
-      };
-    }
+    receiveI2C();
     lastTime = millis();
   }
 }
