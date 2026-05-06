@@ -38,11 +38,6 @@ void setupServer()
                 }
             }
             sendI2C(id, byteVal);
-
-            Serial.print("ID: ");
-            Serial.print(id);
-            Serial.print(" - New Value: ");
-            Serial.println(byteVal);
         }
         request->send(200, "text/plain", "OK"); 
     });
@@ -91,10 +86,10 @@ void sendEvents(byte id, uint16_t msg)
         }
         setDate();
     }
-    Serial.print("ID: ");
-    Serial.print(inputID);
-    Serial.print(" - Value: ");
-    Serial.println(msg);
+    // Serial.print("ID: ");
+    // Serial.print(inputID);
+    // Serial.print(" - Value: ");
+    // Serial.println(msg);
 }
 
 String processor(const String &var)

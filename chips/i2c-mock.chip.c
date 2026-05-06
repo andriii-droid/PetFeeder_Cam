@@ -12,46 +12,49 @@ typedef struct
     pin_t pin_sda;
 } chip_state_t;
 
-
-
 typedef struct
 {
     uint8_t items[100];
-    int top;
-} Stack;
+    int head;  // Where we pop from
+    int tail;  // Where we push to
+    int count; // Current number of items
+} Pipeline;
 
-Stack dataStack;
+Pipeline dataPipe;
 
 // Initialize stack
-void initStack(Stack *s)
+void initPipeline(Pipeline *p)
 {
-    s->top = -1; // -1 means the stack is empty
+    p->head = 0;
+    p->tail = 0;
+    p->count = 0;
 }
 
-void push(Stack *s, uint8_t data)
+bool push(Pipeline *p, uint8_t newData)
 {
-    if (s->top == 100 - 1)
+    if (p->count == 100)
     {
-        printf("Stack Overflow! Cannot push %d\n", data);
+        return false; // Pipeline Full
     }
-    else
-    {
-        s->items[++(s->top)] = data;
-        printf("Pushed %d onto the stack.\n", data);
-    }
+
+    p->items[p->tail] = newData;
+    p->tail = (p->tail + 1) % 100; // Move tail and wrap if needed
+    p->count++;
+    return true;
 }
 
-uint8_t pop(Stack *s)
+uint8_t pop(Pipeline *p)
 {
-    if (s->top == -1)
+    if (p->count == 0)
     {
-        printf("Stack Underflow! The stack is empty.\n");
-        return 255; // Error value
+        // Return an "Error" struct (all 255s)
+        return 255;
     }
-    else
-    {
-        return s->items[(s->top)--];
-    }
+
+    uint8_t out = p->items[p->head];
+    p->head = (p->head + 1) % 100; // Move head and wrap
+    p->count--;
+    return out;
 }
 
 static bool on_i2c_connect(void *user_data, uint32_t address, bool connect);
@@ -75,14 +78,14 @@ void chip_init()
     };
     i2c_init(&i2c_config);
 
-    initStack(&dataStack);
+    initPipeline(&dataPipe);
 
-    push(&dataStack, 55);
-    push(&dataStack, 0);
-    push(&dataStack, 1);
-    push(&dataStack, 44);
-    push(&dataStack, 0);
-    push(&dataStack, 0);
+    push(&dataPipe, 1);
+    push(&dataPipe, 0);
+    push(&dataPipe, 30);
+    push(&dataPipe, 0);
+    push(&dataPipe, 0);
+    push(&dataPipe, 33);
 }
 
 bool on_i2c_connect(void *user_data, uint32_t address, bool connect)
@@ -92,7 +95,7 @@ bool on_i2c_connect(void *user_data, uint32_t address, bool connect)
 
 uint8_t on_i2c_read(void *user_data) //When Data requested
 {
-    uint8_t data = pop(&dataStack);
+    uint8_t data = pop(&dataPipe);
     printf("Sending data from controller: ");
     printf("%x", data);
 
@@ -104,6 +107,7 @@ bool on_i2c_write(void *user_data, uint8_t data)
     printf("Getting data from controller: ");
     printf("%x", data);
     printf("\n");
+    push(&dataPipe, data);
     return true; // Ack
 }
 

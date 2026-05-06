@@ -45,6 +45,11 @@ void sendI2C(byte id, uint16_t msg)
         Wire.beginTransmission(slaveAdress); // Set the slave address
         Wire.write(data, 3);                 // Send the command/data byte
         Wire.endTransmission();
+
+        Serial.print("I2C Send - ID: ");
+        Serial.print(id);
+        Serial.print(" | New Value: ");
+        Serial.println(msg);
     }
     else
     {
@@ -76,7 +81,7 @@ void receiveI2C()
                 {
                     uint16_t data = (Wire.read() * 10) + Wire.read();
 
-                    Serial.print("ID: ");
+                    Serial.print("I2C Received - ID: ");
                     Serial.print(id);
                     Serial.print(" | Value: ");
                     Serial.println(data);
