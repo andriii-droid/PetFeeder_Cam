@@ -86,10 +86,6 @@ void sendEvents(byte id, uint16_t msg)
         }
         setDate();
     }
-    // Serial.print("ID: ");
-    // Serial.print(inputID);
-    // Serial.print(" - Value: ");
-    // Serial.println(msg);
 }
 
 String processor(const String &var)
