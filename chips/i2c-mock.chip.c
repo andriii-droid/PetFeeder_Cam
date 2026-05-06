@@ -46,7 +46,7 @@ uint8_t pop(Stack *s)
     if (s->top == -1)
     {
         printf("Stack Underflow! The stack is empty.\n");
-        return -1; // Error value
+        return 255; // Error value
     }
     else
     {
@@ -77,6 +77,9 @@ void chip_init()
 
     initStack(&dataStack);
 
+    push(&dataStack, 55);
+    push(&dataStack, 0);
+    push(&dataStack, 1);
     push(&dataStack, 44);
     push(&dataStack, 0);
     push(&dataStack, 0);
