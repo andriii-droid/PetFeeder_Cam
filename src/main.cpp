@@ -97,6 +97,7 @@ void loop()
             Serial.print(id);
             Serial.print(" | Value: ");
             Serial.println(data);
+            sendEvents(id, data);
           }
         }
         else

@@ -97,7 +97,7 @@ void sendEvents(byte id, uint16_t msg)
     Serial.println(msg);
 }
 
-    String processor(const String &var)
+String processor(const String &var)
 {
     updateValues = true;
 
