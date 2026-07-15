@@ -5,14 +5,14 @@
 #include <date.h>
 #include <time.h>
 
-#define DEV_MODE 1 // Set to 1 for Dev, 0 for Production
+#define DEV_MODE 0 // Set to 1 for Dev, 0 for Production
 
 #if DEV_MODE
 const char *ssid = "Wokwi-GUEST";
 const char *password = "";
 #else
-const char *ssid = "";
-const char *password = "";
+const char *ssid = "Zyxel_4061";
+const char *password = "ip7r3am4f3g8ih7f";
 #endif
 
 AsyncWebServer server(80);
@@ -32,6 +32,8 @@ dataStruct webData[10] = {
 };
 
 int slaveAdress = -1;
+const int sda_pin = 13;
+const int scl_pin = 14;
 
 bool updateValues = false;
 
@@ -42,11 +44,13 @@ unsigned long timerDelay = 5000;
 const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 3600;
 const int daylightOffset_sec = 3600;
+const int FLASH_LED = 4;
+const int RED_LED = 33;
 
 void setup()
 {
   Serial.begin(115200);
-  Wire.begin();
+  Wire.begin(sda_pin, scl_pin);
   setupWifi();
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   setupServer();
@@ -54,6 +58,11 @@ void setup()
   slaveAdress = searchI2C();
   getLocalTime(&timeinfo, 2000);
   Serial.println(&timeinfo);
+  pinMode(FLASH_LED, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+  digitalWrite(RED_LED, LOW);
+  delay(100);
+  digitalWrite(RED_LED, HIGH);
 }
 
 void loop()
